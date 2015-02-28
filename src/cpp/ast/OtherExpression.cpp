@@ -432,7 +432,11 @@ Type* wake::ast::OtherExpression::typeCheck(bool forceArrayIdentifier) {
 
 			}
 			break;
-
+		case NT_NUMBERLIT_WITHOPTIONALACCESS:
+			{
+				errors->addError(new SemanticError(OPTIONAL_USE_OF_NONOPTIONAL_TYPE, "using .? on a number literal", node));
+			}
+			break;
 		case NT_MEMBER_ACCESS:
 			{
 				Type subject = *auto_ptr<Type>(children[0].typeCheck(false));

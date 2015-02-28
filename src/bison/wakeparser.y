@@ -69,7 +69,7 @@ int wakewrap()
 %token <string> ANNOTATION
 %token <string> STRING
 %type <string> identifier
-%token <number> NUMBER
+%token <number> NUMBER NUMBER_WITHACCESS NUMBER_WITHOPTIONALACCESS
 %token <number> BOOL
 %token <number> SYM_SHADOW
 %token <void> SYM_ARRAYED
@@ -316,7 +316,8 @@ value:
 	| SYM_ARRAYED																{ $$ = MakeEmptyNode(NT_ARRAY_DECLARATION, @$); }
 	| NOTHING																	{ $$ = MakeEmptyNode(NT_NOTHING, @$); }
 	| objectable '.' shadowabletype												{ $$ = MakeTwoBranchNode(NT_MEMBER_ACCESS, $1, MakeNodeFromType($3, @3), @$); }
-	| '-' NUMBER_WITHACCESS shadowabletype										{ $$ = MakeTwoBranchNode(NT_MEMBER_ACCESS, MakeTwoBranchNode(NT_SUBTRACT, MakeNodeFromNumber(NUMBER_LIT, 0, @2), MakeNodeFromNumber(NT_NUMBERLIT,$1,@1)), MakeNodeFromType($3, @3), @$); }
+	| '-' NUMBER_WITHACCESS shadowabletype										{ $$ = MakeTwoBranchNode(NT_MEMBER_ACCESS, MakeTwoBranchNode(NT_SUBTRACT, MakeNodeFromNumber(NT_NUMBERLIT, 0, @2), MakeNodeFromNumber(NT_NUMBERLIT,$2,@2), @2), MakeNodeFromType($3, @3), @$); }
+	| NUMBER_WITHOPTIONALACCESS shadowabletype									{ $$ = MakeEmptyNode(NT_NUMBERLIT_WITHOPTIONALACCESS, @$); }
 	| objectable SYM_EARLYBAILOUT_DOT shadowabletype							{ $$ = MakeTwoBranchNode(NT_EARLYBAILOUT_MEMBER_ACCESS, $1, MakeNodeFromType($3, @3), @$); }
 	;
 
@@ -325,7 +326,8 @@ value_invokable:
 	| value '[' expression ']'													{ $$ = MakeTwoBranchNode(NT_ARRAY_ACCESS, $1, $3, @$); }
 	| value SYM_TYPESAFE_INDEX expression ']'									{ $$ = MakeTwoBranchNode(NT_TYPESAFE_ARRAY_ACCESS, $1, $3, @$); }
 	| objectable '.' alias														{ $$ = MakeTwoBranchNode(NT_MEMBER_ACCESS, $1, MakeNodeFromString(NT_ALIAS, $3, @3), @$); }
-	| '-' NUMBER_WITHACCESS shadowabletype										{ $$ = MakeTwoBranchNode(NT_MEMBER_ACCESS, MakeTwoBranchNode(NT_SUBTRACT, MakeNodeFromNumber(NUMBER_LIT, 0, @2), MakeNodeFromNumber(NT_NUMBERLIT,$1,@1)), MakeNodeFromString(NT_ALIAS, $3, @3), @$); }
+	| '-' NUMBER_WITHACCESS alias												{ $$ = MakeTwoBranchNode(NT_MEMBER_ACCESS, MakeTwoBranchNode(NT_SUBTRACT, MakeNodeFromNumber(NT_NUMBERLIT, 0, @2), MakeNodeFromNumber(NT_NUMBERLIT,$2,@2), @2), MakeNodeFromString(NT_ALIAS, $3, @3), @$); }
+	| NUMBER_WITHOPTIONALACCESS alias											{ $$ = MakeEmptyNode(NT_NUMBERLIT_WITHOPTIONALACCESS, @$); }
 	| objectable SYM_EARLYBAILOUT_DOT alias										{ $$ = MakeTwoBranchNode(NT_EARLYBAILOUT_MEMBER_ACCESS, $1, MakeNodeFromString(NT_ALIAS, $3, @3), @$); }
 	| '(' expression ')'														{ $$ = $2; }
 	| value_invokable methodcallsegments										{

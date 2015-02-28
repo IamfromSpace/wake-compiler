@@ -17,9 +17,11 @@ PTT_TEST_CASE(
 	"every MyClass is:											\n\
 		myMethod() {											\n\
 			1.?Text;											\n\
+			-1.?Text;											\n\
 			'hey'.?Text;										\n\
 			true.?Text; 										\n\
 		}",
+	PTT_EXPECT(OPTIONAL_USE_OF_NONOPTIONAL_TYPE)
 	PTT_EXPECT(OPTIONAL_USE_OF_NONOPTIONAL_TYPE)
 	PTT_EXPECT(OPTIONAL_USE_OF_NONOPTIONAL_TYPE)
 	PTT_EXPECT(OPTIONAL_USE_OF_NONOPTIONAL_TYPE)
@@ -29,10 +31,12 @@ PTT_TEST_CASE(
 	TestEarlyBailoutMethodCallNotValidOnNonOptionals,
 	"every MyClass is:											\n\
 		myMethod() {											\n\
+			-1.?orMaxOf(3);										\n\
 			1.?orMaxOf(3);										\n\
 			'hey'.?split(',');									\n\
 			true.?toString(); 									\n\
 		}",
+	PTT_EXPECT(OPTIONAL_USE_OF_NONOPTIONAL_TYPE)
 	PTT_EXPECT(OPTIONAL_USE_OF_NONOPTIONAL_TYPE)
 	PTT_EXPECT(OPTIONAL_USE_OF_NONOPTIONAL_TYPE)
 	PTT_EXPECT(OPTIONAL_USE_OF_NONOPTIONAL_TYPE)
